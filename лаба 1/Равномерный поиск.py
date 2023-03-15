@@ -11,20 +11,11 @@ def f(x):
 
 def ravnomerniySearch():
     global a, b, e
-    k = 0
-    N = (b - a) / e
-    num = 0
-    minn = b
-    i = a
-    N = int(N)
-    for i in range(0, N):
-        k += 1
-        xi = a + (i * (b - a)) / N
-        if f(xi) <= f(minn):
-            minn = xi
-            num = i
+    N, k = int((b - a) / e), 0
+    fminlist = [f(a + (i * (b - a)) / N) for i in range(N)]
+    minn = min(fminlist)
+    num = fminlist.index(minn)
     answer = ((a + (num - 1) * (b - a) / N) + (a + (num + 1) * (b - a) / N)) / 2
-
     return answer, k
 
 

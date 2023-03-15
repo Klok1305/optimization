@@ -4,31 +4,31 @@ def f(x):
     return (x + 5) ** 4
 
 
-def binarySearch(a=-6, b=-2, tol=0.001):
-    k = 0
-    while abs(b - a) > tol:
-        k += 1
-
-        c = (a + b) / 2
-        fc = f(c)
-        if f(a) < f(b):
-            if fc > f(b):
-                a = c
+def binarySearch(f, a, b, tol=0.001):
+    xmid = (a + b) / 2
+    L = b - a
+    iter_count = 0
+    while L > tol:
+        x1, x2 = a + L / 4, b - L / 4
+        fx1, fmid, fx2 = f(x1), f(xmid), f(x2)
+        if fx1 < fmid:
+            b = xmid
+            xmid = x1
+        elif fx1 >= fmid:
+            if fx2 < fmid:
+                a = xmid
+                xmid = x2
             else:
-                b = c
-        else:
-            if fc > f(a):
-                b = c
-            else:
-                a = c
-
-    answer = (a + b) / 2
-    return answer, k
+                a = x1
+                b = x2
+        L = b - a
+        iter_count += 1
+    print("Кол-во итераций ", iter_count)
+    return xmid
 
 
 q = 0
-answer, k = binarySearch()
+answer = binarySearch(f, -6, -2)
 print("Минимум", answer)
-print("Итерации", k)
 print("Вычисления функции", q)
 print("Значение функции в минимуме", f(answer))
