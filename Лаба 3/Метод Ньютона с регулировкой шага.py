@@ -16,7 +16,7 @@ def hessian_f(x, y):
     return np.array([[6 * x, 0], [0, 2]])
 
 
-def newton_method(x0, eps1, eps2, M):
+def newton_method(x0, eps1, eps2, M, alpha):
     x = x0
     k = 0
     while True:
@@ -32,6 +32,9 @@ def newton_method(x0, eps1, eps2, M):
             d = -grad
         tk = 1 if np.array_equal(d, -hessian_inv.dot(grad)) else 0.5
         x_new = x + tk * d
+        while f(*x_new) > f(*x) + alpha * np.dot(grad, x_new - x):
+            tk /= 2
+            x_new = x + tk * d
         if np.linalg.norm(x_new - x) <= eps2 and abs(f(*x_new) - f(*x)) <= eps2:
             return x_new
         k += 1
@@ -43,6 +46,7 @@ x0 = np.array([1, 1])
 eps1 = 0.0001
 eps2 = 0.0001
 M = 100
-x_min = newton_method(x0, eps1, eps2, M)
+alpha = 0.5
+x_min = newton_method(x0, eps1, eps2, M, alpha)
 print("Минимум функции:", f(*x_min))
 print("Точка минимума:", x_min)
