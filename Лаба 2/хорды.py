@@ -3,7 +3,7 @@ import math
 
 def f(x):
     global q
-    q += 1
+    # q += 1
     return math.exp(x) + 1 / x
 
 
@@ -29,5 +29,5 @@ def secant_method(a, b, eps):
 q, k = 0, 0
 a, b = 0.5, 1.0
 x_min = secant_method(a, b, 0.0001)
+print("Кол-во итераций {}, кол-во вычислений функции {}".format(k, q))
 print("Минимум функции f(x) на отрезке [{}, {}]: x = {}, f(x) = {}".format(a, b, x_min, f(x_min)))
-print("Кол во итераций {}, кол-во исчислений функций {}".format(k, q))
