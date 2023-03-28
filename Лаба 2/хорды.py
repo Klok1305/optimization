@@ -16,12 +16,12 @@ def df(x):
 def secant_method(a, b, eps):
     global k
     a1, a2, = a, b
-    a3 = a2 - df(a2) * (a1 - a2) / (df(a1) - df(a2))
+    a3 = a1 - df(a1) * (a1 - a2) / (df(a1) - df(a2))
     while abs(df(a3)) > eps or abs(a1 - a2) > eps:
         k += 1
         a1 = a2
         a2 = a3
-        a3 = a2 - df(a2) * (a1 - a2) / (df(a1) - df(a2))
+        a3 = a1 - df(a1) * (a1 - a2) / (df(a1) - df(a2))
 
     return a3
 
