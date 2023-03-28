@@ -1,32 +1,45 @@
-# f(x1, x2) = x1 ** 3 + x2 ** 2 - x1 * 3 - x2 * 2 + 2
 import numpy as np
 
 
-def f(x1, x2):
-    return x1 ** 3 + x2 ** 2 - x1 * 3 - x2 * 2 + 2
+def f(x, y):
+    return x ** 3 + y ** 2 - x * 3 - y * 2 + 2
 
 
-def gradient(x1, x2):
-    return np.array([3*x1**2-3, 2*x2-2])
-
-def hessian(x1, x2):
-    return np.array([[6*x1, 0], [0, 2]])
+def grad_f(x, y):
+    return np.array([3 * x ** 2 - 3, 2 * y - 2])
 
 
-def newton_method(f, gradient, hessian, x0, y0, tol=1e-6, max_iter=1000):
-    xk, yk = x0, y0
-    for _ in range(max_iter):
-        grad = gradient(xk, yk)
-        hess = hessian(xk, yk)
-        delta = np.linalg.solve(hess, -grad)
-        xk, yk = xk + delta[0], yk + delta[1]
-
-        if np.linalg.norm(delta) < tol:
-            break
-
-    return xk, yk
+def hessian_f(x, y):
+    return np.array([[6 * x, 0], [0, 2]])
 
 
-x0, y0 = 0, 0
-x_min, y_min = newton_method(f, gradient, hessian, x0, y0)
-print(f"Минимум функции достигается в точке ({x_min}, {y_min})")
+def newton_method(x0, eps1, eps2, M):
+    x = x0
+    k = 0
+    while True:
+        grad = grad_f(x[0], x[1])
+        if np.linalg.norm(grad) < eps1:
+            return x
+        if k >= M:
+            return x
+        hessian_inv = np.linalg.inv(hessian_f(x[0], x[1]))
+        if np.all(np.linalg.eigvals(hessian_inv) > 0):
+            d = -hessian_inv.dot(grad)
+        else:
+            d = -grad
+        tk = 1 if np.array_equal(d, -hessian_inv.dot(grad)) else 0.5
+        x_new = x + tk * d
+        if np.linalg.norm(x_new - x) <= eps2 and abs(f(*x_new) - f(*x)) <= eps2:
+            return x_new
+        k += 1
+        x = x_new
+
+
+# Пример использования
+x0 = np.array([1, 1])
+eps1 = 1e-6
+eps2 = 1e-6
+M = 100
+x_min = newton_method(x0, eps1, eps2, M)
+print("Минимум функции:", f(*x_min))
+print("Точка минимума:", x_min)

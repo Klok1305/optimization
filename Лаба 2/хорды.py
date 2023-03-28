@@ -3,7 +3,7 @@ import math
 
 def f(x):
     global q
-    # q += 1
+    q += 1
     return math.exp(x) + 1 / x
 
 
