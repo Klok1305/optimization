@@ -2,18 +2,16 @@ import numpy as np
 
 
 def f(x, y):
-    global q
-    return x ** 3 + y ** 2 - x * 3 - y * 2 + 2
+    return ((x - 5) ** 2) * ((y - 4) ** 2) + (x - 5) ** 2 + (y - 4) ** 2 + 1
 
 
 def grad_f(x, y):
-    global q
-    return np.array([3 * x ** 2 - 3, 2 * y - 2])
+    return np.array([2 * (x - 5) * ((y - 4) ** 2) + 2 * (x - 5), 2 * (y - 4) * ((x - 5) ** 2) + 2 * (y - 4)])
 
 
 def hessian_f(x, y):
-    global q
-    return np.array([[6 * x, 0], [0, 2]])
+    return np.array([[2 * ((y - 4) ** 2) + 2 + 2 * (x - 5) ** 2, 4 * (x - 5) * (y - 4)],
+                     [4 * (x - 5) * (y - 4), 2 * ((x - 5) ** 2) + 2 * (y - 4) ** 2]])
 
 
 def newton_method(x0, eps1, eps2, M, alpha):
@@ -41,7 +39,6 @@ def newton_method(x0, eps1, eps2, M, alpha):
         x = x_new
 
 
-# Пример использования
 x0 = np.array([1, 1])
 eps1 = 0.0001
 eps2 = 0.0001
@@ -49,4 +46,4 @@ M = 100
 alpha = 0.5
 x_min = newton_method(x0, eps1, eps2, M, alpha)
 print("Минимум функции:", f(*x_min))
-print("Точка минимума:", x_min)
+print("Точка минимума:", x_min[0], x_min[1])
