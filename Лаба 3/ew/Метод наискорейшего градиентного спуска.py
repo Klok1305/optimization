@@ -22,6 +22,7 @@ def steepest_descent(x0, y0, alpha=0.1, eps=1e-6, max_iter=1000):
         if np.linalg.norm(grad) < eps:
             break
         direction = -grad
+        # step_size = f(x[0] - step_size * grad[0], x[1] - step_size * grad[1])
         step_size = alpha
         x = x + step_size * direction
     return x[0], x[1], f(x[0], x[1])
