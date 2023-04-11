@@ -2,35 +2,47 @@ import numpy as np
 
 
 def f(x):
+    global q
+    q += 1
     return ((x[0] - 5) ** 2) * ((x[1] - 4) ** 2) + (x[0] - 5) ** 2 + (x[1] - 4) ** 2 + 1
 
 
 def grad_f(x):
+    global q
+    q += 1
     return np.array([4 * (x[0] - 5) * ((x[1] - 4) ** 2) + 2 * (x[0] - 5),
                      4 * (x[1] - 4) * ((x[0] - 5) ** 2) + 2 * (x[1] - 4)])
 
 
-def Fletcher_Reeves(x0, eps1, eps2, M):
+def fletcher_reeves(x0, eps1, eps2, M):
+    global j
     k = 0
-    x = x0.copy()
-    g = grad_f(x)
-    d = -g
-    while np.linalg.norm(g) > eps1 and k < M:
-        t = 1
-        while f(x + t * d) > f(x) - 0.5 * t * np.dot(g, d):
-            t *= 0.5
-        x_next = x + t * d
-        g_next = grad_f(x_next)
-        beta = np.dot(g_next, g_next) / np.dot(g, g)
-        d_next = -g_next + beta * d
-        if np.linalg.norm(x_next - x) <= eps2 and np.abs(f(x_next) - f(x)) <= eps2:
+    x = x0
+    grad = grad_f(x)
+    while np.linalg.norm(grad) > eps1 and k < M:
+        j += 1
+        if k == 0:
+            beta = 0
+        else:
+            beta = np.dot(grad, grad) / np.dot(grad_prev, grad_prev)
+        d = -grad + beta * d_prev if k > 0 else -grad
+        tk = 1.0
+        while f(x + tk * d) > f(x) + eps2 * tk * np.dot(grad, d):
+            tk *= 0.5
+        x_next = x + tk * d
+        grad_prev = grad
+        grad = grad_f(x_next)
+        if (np.linalg.norm(x_next - x) <= eps2 and
+                abs(f(x_next) - f(x)) <= eps2):
             x = x_next
             break
-        x = x_next
-        g = g_next
-        d = d_next
         k += 1
+        x = x_next
+        d_prev = d
     return x
 
-
-print(Fletcher_Reeves([0, 0], 0.0001, 0.0001, 1000))
+j, q = 0, 0
+answer = fletcher_reeves([0, 0], 0.001, 0.001, 100)
+print("Итерации: {}, Вычисления: {}". format(j, q))
+print("Минимум функции находится в [{};{}]. Min = {}".format(round(answer[0], 4), round(answer[1], 4),
+                                                             round(f(answer), 4)))
