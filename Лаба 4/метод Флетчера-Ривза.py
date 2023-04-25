@@ -41,8 +41,9 @@ def fletcher_reeves(x0, eps1, eps2, M):
         d_prev = d
     return x
 
+
 j, q = 0, 0
 answer = fletcher_reeves([0, 0], 0.001, 0.001, 100)
-print("Итерации: {}, Вычисления: {}". format(j, q))
+print("Итерации: {}, Вычисления: {}".format(j, q))
 print("Минимум функции находится в [{};{}]. Min = {}".format(round(answer[0], 4), round(answer[1], 4),
                                                              round(f(answer), 4)))

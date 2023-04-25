@@ -19,27 +19,12 @@ def backtrack_line_search(x, grad, alpha=0.1, beta=0.7):
     return t
 
 
-def golden_section_search(x, y, gradX, gradY):
-    a = 0  # начальное значение интервала
-    b = 1  # конечное значение интервала
-    tau = (5 ** (1 / 2) - 1) / 2  # коэффициент золотого сечения
-
-    while abs(b - a) > 0.0001:
-        x1 = b - tau * (b - a)  # вычисляем промежуточное значение x1
-        x2 = a + tau * (b - a)  # вычисляем промежуточное значение x2
-
-        # выбираем новый интервал в зависимости от значения функции в промежуточных точках
-        if f([x + x1 * gradX, y + x1 * gradY]) < f([x + x2 * gradX, y + x2 * gradY]):
-            b = x2
-        else:
-            a = x1
-
-    return (a + b) / 2  # возвращаем оптимальный шаг
 
 
 def minimize(x0, eps1, eps2, M):
     """Функция минимизации"""
     x = x0
+    gamma2 = 2
     k = 0
     while True:
         grad = grad_f(x)
@@ -48,7 +33,6 @@ def minimize(x0, eps1, eps2, M):
         if k >= M:
             return x
         gamma = backtrack_line_search(x, grad)
-        gamma1 = golden_section_search(*x, *grad)
         x_new = x - gamma * grad
         if np.linalg.norm(x_new - x) < eps2 and np.abs(f(x_new) - f(x)) < eps2:
             return x_new

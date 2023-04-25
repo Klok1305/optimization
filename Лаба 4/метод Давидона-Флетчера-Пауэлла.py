@@ -38,7 +38,7 @@ def DFP_method(x0, eps, max_iter):
     return x, f(x)
 
 
-x0 = np.array([0, 0])
+x0 = np.array([1, 1])
 eps = 1e-6
 max_iter = 100
 j, q = 0, 0

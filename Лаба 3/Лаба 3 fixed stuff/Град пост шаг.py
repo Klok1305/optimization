@@ -8,7 +8,7 @@ def f(x, y):
     return x ** 3 + y ** 2 - x * 3 - y * 2 + 2
 
 
-alpha, eps, x, y, gradX, gradY = 0.1, 0.01, 0, 0, 0, 0
+alpha, eps, x, y, gradX, gradY = 0.1, 0.001, 0, 0, 0, 0
 iterations, calcs = 0, 0
 
 while True:
