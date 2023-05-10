@@ -1,50 +1,62 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
-# Определение функции
-def function(x, y):
-    return -8 * x**2 + 4 * x - y**2 + 12 * y - 7
 
-# Определение градиента функции
-def gradient(x, y):
-    gradient_x = -16 * x + 4
-    gradient_y = -2 * y + 12
-    return gradient_x, gradient_y
+def f(x, y):
+    global calcs
+    calcs += 1
+    return -8 * x ** 2 + 4 * x - y ** 2 + 12 * y - 7
 
-# Определение ограничения
-def constraint(x, y):
-    return 2 * x + 3 * y - 6
 
-# Создание сетки точек для построения графика
-x = np.linspace(-10, 10, 100)
-y = np.linspace(-10, 10, 100)
+def constraint(x):
+    return (6 - 2 * x) / 3
+
+
+def gradient_with_projekcia(start_point, step_size, eps):
+    global iters
+    x = start_point[0]
+    y = start_point[1]
+    x_all = [x]
+    y_all = [y]
+
+    while True:
+        iters += 1
+        grad_x = -16 * x + 4
+        grad_y = -2 * y + 12
+        x_new = x + step_size * grad_x
+        y_new = y + step_size * grad_y
+        if constraint(x_new) < y_new:
+            y_new = constraint(x_new)
+        if abs(f(x_new, y_new) - f(x, y)) < eps:
+            break
+
+        x = x_new
+        y = y_new
+        x_all.append(x)
+        y_all.append(y)
+    return (x, y, x_all, y_all)
+
+
+iters, calcs = 0, 0
+start_point = np.array([1, 1])
+step_size = 0.1
+precision = 0.0001
+x_max, y_max, x_history, y_history = gradient_with_projekcia(start_point, step_size, precision)
+
+print(f'Максимум в x = {x_max:.2f}, y = {y_max:.2f}. F = {f(x_max, y_max)}')
+print(f"Итерации: {iters} \nВычисления функции: {calcs}")
+
+# Рисунки
+x = np.linspace(-2, 3, 100)
+y = np.linspace(-1, 7, 100)
 X, Y = np.meshgrid(x, y)
-
-# Вычисление значений функции на сетке
-Z = function(X, Y)
-
-# Вычисление значений градиента на сетке
-grad_x, grad_y = gradient(X, Y)
-
-# Вычисление значений ограничения на сетке
-C = constraint(X, Y)
-
-# Построение объемного графика функции с отображением градиента и ограничением цветами
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-
-ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
-sc = ax.scatter(X, Y, Z, c=np.arctan2(grad_y, grad_x), cmap='viridis')
-plt.colorbar(sc)
-
-# Построение контуров ограничения
-ax.contour(X, Y, Z, levels=[-10000000, 1000, 1000000], colors='black', linewidths=2)
-
-# Настройка осей и меток
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_zlabel('Z')
-ax.set_title('-8 * x**2 + 4 * x - y**2 + 12 * y - 7 с градиентом и ограничением')
-
+Z = f(X, Y)
+plt.figure(figsize=(10, 8))
+plt.contour(X, Y, Z, 50, cmap='jet')
+plt.plot(x_history, y_history, 'o-', color='black')
+plt.plot(x, constraint(x), '--', color='purple')
+plt.plot(x_max, y_max, 'o', color='red')
+plt.text(x_max, y_max, f'({x_max:.2f}, {y_max:.2f})', ha='center', va='bottom')
+plt.xlabel('x')
+plt.ylabel('y')
 plt.show()
